@@ -5,6 +5,8 @@
 </p>
 
 ---
+> [!TIP]
+> **Английская версия:** [README.md](README.md)
 
 > [!NOTE]
 > Плагин для [Yazi](https://github.com/sxyazi/yazi) для управления закладками, поддерживающий следующие функции:
@@ -32,13 +34,16 @@
 
 ```sh
 ya pkg add WhoSowSee/whoosh
+```
 
+```sh
 # Ручная установка
+
 # Linux/macOS
-git clone https://github.com/WhoSowSee/whoosh.git ~/.config/yazi/plugins/whoosh.yazi
+git clone https://github.com/WhoSowSee/whoosh.yazi.git ~/.config/yazi/plugins/whoosh.yazi
 
 # Windows
-git clone https://github.com/WhoSowSee/whoosh.git $env:APPDATA\yazi\config\plugins\whoosh.yazi
+git clone https://github.com/WhoSowSee/whoosh.yazi.git $env:APPDATA\yazi\config\plugins\whoosh.yazi
 ```
 
 ## Использование
