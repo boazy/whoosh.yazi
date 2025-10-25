@@ -34,17 +34,13 @@
 > Requires Yazi v25.5.28+
 
 ```sh
-ya pkg add WhoSowSee/whoosh
-```
-
-```sh
 # Manual installation
 
 # Linux/macOS
-git clone https://github.com/WhoSowSee/whoosh.yazi.git ~/.config/yazi/plugins/whoosh.yazi
+git clone https://gitlab.com/WhoSowSee/whoosh.yazi.git ~/.config/yazi/plugins/whoosh.yazi
 
 # Windows
-git clone https://github.com/WhoSowSee/whoosh.yazi.git $env:APPDATA\yazi\config\plugins\whoosh.yazi
+git clone https://gitlab.com/WhoSowSee/whoosh.yazi.git $env:APPDATA\yazi\config\plugins\whoosh.yazi
 ```
 
 ## Usage
