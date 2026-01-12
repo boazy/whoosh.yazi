@@ -31,7 +31,7 @@
 ## Installation
 
 > [!IMPORTANT]
-> Requires Yazi v25.5.28+
+> Requires Yazi v26.1.4+
 
 ```sh
 # Manual installation
