@@ -1252,7 +1252,7 @@ action_save = function(path, is_temp)
 
   while true do
     local title = is_temp and "Tag ⟨alias name⟩ [TEMPORARY]" or "Tag ⟨alias name⟩"
-    local value, event = ya.input({ title = title, value = tag, position = { "top-center", y = 3, w = 40 } })
+    local value, event = ya.input({ title = title, value = tag, pos = { "top-center", y = 3, w = 40 } })
     if event ~= 1 then return end
     tag = value or ''
     if #tag == 0 then
@@ -1283,7 +1283,7 @@ action_save = function(path, is_temp)
     local value, event = ya.input({
       title = "Keys ⟨space, comma or empty separator⟩",
       value = key_display,
-      position = { "top-center", y = 3, w = 50 }
+      pos = { "top-center", y = 3, w = 50 }
     })
     if event ~= 1 then return end
 
@@ -1435,7 +1435,7 @@ end
 local action_delete_all = function(temp_only)
   local mb_path = get_state_attr("path")
   local title = temp_only and "Delete all temporary bookmarks? ⟨y/n⟩" or "Delete all user bookmarks? ⟨y/n⟩"
-  local value, event = ya.input({ title = title, position = { "top-center", y = 3, w = 45 } })
+  local value, event = ya.input({ title = title, pos = { "top-center", y = 3, w = 45 } })
   if event ~= 1 or string.lower(value or "") ~= "y" then
     ya.notify { title = "Bookmarks", content = "Cancel delete", timeout = 1, level = "info" }
     return
