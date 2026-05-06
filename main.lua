@@ -537,8 +537,8 @@ local function deserialize_key_from_file(key_str)
 
   if key_str:find(",") then
     local seq = {}
-    for token in key_str:gmatch("[^,%s]+") do
-      token = token:gsub("^%s*(.-)%s*$", "%1")
+    for raw_token in key_str:gmatch("[^,%s]+") do
+      local token = raw_token:gsub("^%s*(.-)%s*$", "%1")
       if token ~= "" then
         if token:match("^<.->$") then
           table.insert(seq, token)
@@ -819,8 +819,8 @@ fzf_find_multi = function()
 
   if result and result ~= "" and result ~= "No deletable bookmarks found" then
     local paths = {}
-    for line in result:gmatch("[^\r\n]+") do
-      line = string.gsub(line, "^%s*(.-)%s*$", "%1")
+    for raw_line in result:gmatch("[^\r\n]+") do
+      local line = string.gsub(raw_line, "^%s*(.-)%s*$", "%1")
       if line ~= "" then
         local tab_pos = line:find("\t")
         if tab_pos then
@@ -1073,8 +1073,8 @@ end
 local function parse_keys_input(input)
   if not input or input == "" then return {} end
   local seq = {}
-  for token in input:gmatch("[^,%s]+") do
-    token = token:gsub("^%s*(.-)%s*$", "%1")
+  for raw_token in input:gmatch("[^,%s]+") do
+    local token = raw_token:gsub("^%s*(.-)%s*$", "%1")
     if token ~= "" then
       if token:match("^<.->$") then
         table.insert(seq, token)
