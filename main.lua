@@ -344,53 +344,6 @@ local function get_display_width(str)
   return ui.Line(str):width()
 end
 
-local function truncate_long_folder_names(path, max_folder_length)
-  if not max_folder_length or max_folder_length <= 0 then
-    return path
-  end
-
-  local separator = ya.target_family() == "windows" and "\\" or "/"
-  local parts = {}
-  local is_windows = ya.target_family() == "windows"
-
-  if is_windows then
-    local drive, rest = path:match("^([A-Za-z]:\\)(.*)$")
-    if drive then
-      table.insert(parts, drive:sub(1, -2))
-      if rest and rest ~= "" then
-        for part in rest:gmatch("[^\\]+") do
-          if #part > max_folder_length then
-            local keep_length = math.max(3, math.floor(max_folder_length * 0.4))
-            local truncated = part:sub(1, keep_length) .. "..."
-            table.insert(parts, truncated)
-          else
-            table.insert(parts, part)
-          end
-        end
-      end
-      return table.concat(parts, separator)
-    end
-  end
-
-  for part in path:gmatch("[^" .. (separator == "\\" and "\\\\" or separator) .. "]+") do
-    if #part > max_folder_length then
-      local keep_length = math.max(3, math.floor(max_folder_length * 0.4))
-      local truncated = part:sub(1, keep_length) .. "..."
-      table.insert(parts, truncated)
-    else
-      table.insert(parts, part)
-    end
-  end
-
-  local result = table.concat(parts, separator)
-
-  if path:sub(1, 1) == separator then
-    result = separator .. result
-  end
-
-  return result
-end
-
 local function path_to_desc_for_fzf(path)
   local fzf_path_truncate_enabled = get_state_attr("fzf_path_truncate_enabled")
   local result_path = apply_home_alias(normalize_path(path))
@@ -587,7 +540,6 @@ local save_to_file = function(mb_path, bookmarks)
 end
 
 fzf_find = function()
-  local mb_path = get_state_attr("path")
   local temp_bookmarks = get_temp_bookmarks()
 
   local permit = ui.hide()
@@ -668,7 +620,6 @@ fzf_find = function()
 end
 
 fzf_find_for_rename = function()
-  local mb_path = get_state_attr("path")
   local temp_bookmarks = get_temp_bookmarks()
 
   local permit = ui.hide()
@@ -1615,8 +1566,6 @@ return {
     elseif action == "delete_by_key" then
       action_delete(which_find_deletable())
     elseif action == "delete_by_fzf" then
-      action_delete_multi(fzf_find_multi())
-    elseif action == "delete_multi_by_fzf" then
       action_delete_multi(fzf_find_multi())
     elseif action == "delete_all" then
       action_delete_all(false)
