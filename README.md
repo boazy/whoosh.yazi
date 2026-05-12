@@ -22,7 +22,8 @@
 > - **Directory history** - Navigate back to previous directory with Backspace
 > - **Tab history navigation** - Browse and jump to recently visited directories with Tab key
 > - **Quick bookmark creation** - Create temporary bookmarks directly from navigation menu
-> - **Configurable menu shortcuts** - Override the default Tab/Backspace/Enter/Space bindings from `init.lua`
+> - **Project root navigation** - Jump to the current Git repository root with `-`
+> - **Configurable menu shortcuts** - Override the default Tab/Backspace/Enter/Space/- bindings from `init.lua`
 
 <div style="text-align: center;">
   <img src="image/plugin.png" alt="Plugin preview" width="1100px">
@@ -94,6 +95,7 @@ require("whoosh"):setup {
     fuzzy_search = "<Space>",        -- Launch fuzzy search (fzf)
     history = "<Tab>",               -- Open directory history
     previous_dir = "<Backspace>",    -- Jump back to the previous directory
+    project_root = "-",              -- Jump to the current Git repository root
   },
 
   -- File path for storing user bookmarks
@@ -242,6 +244,7 @@ When using `jump_by_key`, you get access to a smart navigation menu with:
 - **Fuzzy search** - Press `<Space>` to open fzf search
 - **Directory history** - Press `<Tab>` to browse history via fzf (only if history exists)
 - **Previous directory** - Press `<Backspace>` to return to the previous directory (if available)
+- **Project root** - Press `-` to jump to the current Git repository root (when inside a repository)
 - **All bookmarks** - Both permanent and temporary bookmarks with clear visual distinction
 
 ### Directory History Navigation
@@ -319,7 +322,7 @@ The plugin supports the following configuration options in the `setup()` functio
 | `bookmarks`                            | table   | `{}`                    | Pre-configured bookmarks (cannot be deleted through plugin)        |
 | `jump_notify`                          | boolean | `false`                 | Show notification when jumping to a bookmark                       |
 | `keys`                                 | string  | `"0123456789abcdef..."` | Characters used for auto-generating bookmark keys                  |
-| `special_keys`                         | table   | `see description`       | Override the built-in menu shortcuts (Enter/Space/Tab/Backspace); set to `false` to hide an item |
+| `special_keys`                         | table   | `see description`       | Override the built-in menu shortcuts (Enter/Space/-/Tab/Backspace); set to `false` to hide an item |
 | `path`                                 | string  | OS-dependent            | File path where user bookmarks are stored                          |
 | `home_alias_enabled`                  | boolean | `true`                  | Replace paths under the user's home directory with `~`              |
 | `path_truncate_enabled`                | boolean | `false`                 | Enable/disable path truncation in navigation menu                  |
@@ -437,6 +440,10 @@ You can jump without opening the menu by calling the plugin with an inline key s
 
 Sequences must be provided inline; whitespace-separated forms are not supported. The format matches the bookmark editing prompt, so you can mix plain characters, comma-separated tokens, and special keys like `<Space>` or `<A-l>`.
 
+The project root shortcut is detected dynamically by walking upward from the current directory until whoosh finds a `.git` file or directory. It is not saved to your bookmarks file.
+
+Special menu shortcuts are resolved before bookmark keys, so a bookmark using the same key will be shadowed by the special shortcut.
+
 ### Navigation Menu Controls
 
 When using `jump_by_key`, the following special controls are available:
@@ -447,6 +454,7 @@ When using `jump_by_key`, the following special controls are available:
 | `<Space>`     | Open fuzzy search                               |
 | `<Tab>`       | Open directory history (only if history exists) |
 | `<Backspace>` | Return to previous directory (if available)     |
+| `-`           | Jump to current Git repository root             |
 | `[a-zA-Z0-9]` | Jump to bookmark with corresponding key         |
 
 ## Inspiration

@@ -5,6 +5,7 @@ local path_sep = package.config:sub(1, 1)
 local DEFAULT_SPECIAL_KEYS = {
   create_temp = "<Enter>",
   fuzzy_search = "<Space>",
+  project_root = "-",
   history = "<Tab>",
   previous_dir = "<Backspace>",
 }
@@ -136,6 +137,81 @@ local function normalize_path(path)
   end
 
   return normalized_path
+end
+
+local function path_exists(path)
+  if not path or path == "" then
+    return false
+  end
+
+  local cha = fs.cha(Url(path), false)
+  return cha ~= nil
+end
+
+local function paths_equal(left, right)
+  left = normalize_path(left)
+  right = normalize_path(right)
+
+  if ya.target_family() == "windows" then
+    return left:lower() == right:lower()
+  end
+
+  return left == right
+end
+
+local function join_path(base, child)
+  if not base or base == "" then
+    return child
+  end
+  if base:sub(-1) == path_sep then
+    return base .. child
+  end
+  return base .. path_sep .. child
+end
+
+local function parent_path(path)
+  local current = normalize_path(path)
+  if current == "" then
+    return nil
+  end
+
+  if ya.target_family() == "windows" then
+    if current:match("^[A-Za-z]:\\$") then
+      return nil
+    end
+
+    current = current:gsub("[\\/]+$", "")
+    local parent = current:match("^(.*)[\\/][^\\/]+$")
+    if parent and parent ~= "" then
+      if parent:match("^[A-Za-z]:$") then
+        return parent .. "\\"
+      end
+      return parent
+    end
+    return nil
+  end
+
+  if current == "/" then
+    return nil
+  end
+
+  current = current:gsub("/+$", "")
+  local parent = current:match("^(.*)/[^/]+$")
+  if parent == "" then
+    return "/"
+  end
+  return parent
+end
+
+local function find_project_root(path)
+  local current = normalize_path(path)
+  while current and current ~= "" do
+    if path_exists(join_path(current, ".git")) then
+      return current
+    end
+    current = parent_path(current)
+  end
+  return nil
 end
 
 local function apply_home_alias(path)
@@ -694,6 +770,8 @@ end
 local create_special_menu_items = function()
   local special_items = {}
   local special_keys = get_state_attr("special_keys") or DEFAULT_SPECIAL_KEYS
+  local current_path = normalize_path(get_current_dir_path())
+
   local create_temp_key = special_keys.create_temp
   if create_temp_key then
     table.insert(special_items, { desc = "Create temporary bookmark", on = create_temp_key, path = "__CREATE_TEMP__" })
@@ -706,7 +784,6 @@ local create_special_menu_items = function()
 
   local current_tab = get_current_tab_idx()
   local history = get_tab_history(current_tab)
-  local current_path = normalize_path(get_current_dir_path())
 
   local filtered_history = {}
   if history then
@@ -727,6 +804,18 @@ local create_special_menu_items = function()
     local previous_dir = filtered_history[1]
     local display_path = path_to_desc(previous_dir)
     table.insert(special_items, { desc = "<- " .. display_path, on = previous_dir_key, path = previous_dir })
+  end
+
+  local project_root_key = special_keys.project_root
+  if project_root_key then
+    local project_root = find_project_root(current_path)
+    if project_root and not paths_equal(project_root, current_path) then
+      table.insert(special_items, {
+        desc = "Project root",
+        on = project_root_key,
+        path = project_root,
+      })
+    end
   end
 
   return special_items
